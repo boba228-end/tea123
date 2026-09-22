@@ -1,0 +1,9 @@
+[
+    ["right",1540],
+    ["wait_for_playr"],
+    ["down",800],
+    ["wait_for_playr"],
+    ["right",300],
+    ["wait_for_playr"],
+    ["removes"]
+]

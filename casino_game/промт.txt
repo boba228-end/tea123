@@ -1,0 +1,117 @@
+import pygame, random, sys
+
+
+pygame.init()
+screen = pygame.display.set_mode((1100, 730))
+pygame.display.set_caption("Казино")
+title_font = pygame.font.SysFont("georgia", 44, bold=True)
+font = pygame.font.SysFont("arial", 40, bold=True)
+small = pygame.font.SysFont("arial", 24, bold=True)
+clock = pygame.time.Clock()
+
+WINE = (45, 10, 15)
+GOLD = (212, 175, 55)
+FELT = (10, 60, 35)
+CREAM = (240, 230, 210)
+
+def load_icon(path, size=70):
+    img = pygame.image.load(path).convert_alpha()
+    return pygame.transform.smoothscale(img, (size, size))
+
+
+symbols = [
+    ("grass", load_icon("casino_game/assets/grass.png"), 2),
+    ("fire", load_icon("casino_game/assets/fire.png"), 4),
+    ("potion", load_icon("casino_game/assets/potion.png"), 6),
+    ("dollar", load_icon("casino_game/assets/dollar.png"), 10),
+]
+result = [symbols[0], symbols[0], symbols[0]]
+balance = 100
+msg = ""
+in_game = False
+
+slot_btn = pygame.Rect(450, 350, 200, 60)
+back_btn = pygame.Rect(20, 20, 80*2, 40*2)
+spin_btn = pygame.Rect(440, 390, 200, 60)
+
+
+def draw_bg():
+    screen.fill(WINE)
+    for row in range(0, 730, 40):
+        offset = 20 if (row // 40) % 2 else 0
+        for col in range(-20, 1100, 40):
+            pygame.draw.circle(screen, (70, 30, 30), (col + offset, row + 20), 3)
+    pygame.draw.rect(screen, GOLD, (0, 0, 1100, 730), width=6)
+
+
+def gold_button(rect, text, txt_color=WINE):
+    pygame.draw.rect(screen, GOLD, rect, border_radius=10)
+    pygame.draw.rect(screen, CREAM, rect, width=2, border_radius=10)
+    label = small.render(text, True, txt_color)
+    screen.blit(label, label.get_rect(center=rect.center))
+
+
+def spin():
+    global balance, msg, result
+    if balance < 10:
+        msg = "Нет денег"
+        return
+    balance -= 10
+    result = [random.choice(symbols) for _ in range(3)]
+    names = [s[0] for s in result]
+    if names[0] == names[1] == names[2]:
+        win = 10 * result[0][2]
+        balance += win
+        msg = f"Джекпот! +{win}"
+    elif names[0] == names[1] or names[1] == names[2] or names[0] == names[2]:
+        balance += 10
+        msg = "Ура! +10"
+    else:
+        msg = "Мимо"
+
+
+running = True
+while running:
+    clock.tick(30)
+    draw_bg()
+
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
+            running = False
+        if e.type == pygame.MOUSEBUTTONDOWN:
+            if not in_game and slot_btn.collidepoint(e.pos):
+                in_game = True
+                msg = ""
+            elif in_game and back_btn.collidepoint(e.pos):
+                in_game = False
+            elif in_game and spin_btn.collidepoint(e.pos):
+                spin()
+
+    if not in_game:
+        title = title_font.render("КАЗИНО", True, GOLD)
+        screen.blit(title, title.get_rect(center=(550, 250)))
+        gold_button(slot_btn, "Слот-машина")
+    else:
+        gold_button(back_btn, "Назад")
+        screen.blit(small.render(f"Баланс: {balance}", True, GOLD), (400, 30))
+
+        reel_panel = pygame.Rect(360, 280, 360, 90)
+        pygame.draw.rect(screen, FELT, reel_panel, border_radius=12)
+        pygame.draw.rect(screen, GOLD, reel_panel, width=4, border_radius=12)
+
+        for i, sym in enumerate(result):
+            icon = sym[1]
+            x = reel_panel.x + 20 + i * 130
+            screen.blit(icon, icon.get_rect(center=(x + 35, reel_panel.centery)))
+
+        gold_button(spin_btn, "Крутить!")
+
+        if msg:
+            msg_label = small.render(msg, True, GOLD)
+            screen.blit(msg_label, msg_label.get_rect(center=(540, 465)))
+
+    pygame.display.flip()
+
+pygame.quit()
+sys.exit()
+сделай из этого 2д только в очень крутой графике и со казино игриами которые я написал всё это в 2д в очень куртой графие в богам стиле с кнопками типо 3д тоььтко 2д обьёмные короче есть баласн 1к и ты должен просто играть в казино эмоджи можно использовать главное сделай карточные игры с хороший графикой карт  а игры типо руслетки где красно чёрное сделай что бля каждой цифры каждого свера своя обьёмная кнопка а в игре кубик кубик должен быть 3д который нандомано вращяется и такде в игре монетка физика должна быть максимально релеастичной в каждой игре должно быть интерактивное обучение типо стрелочка и раядо надпись как в это играть обучение тольео токда когда тиы зашёл в игру при кнопке запкуст в начале меню где можно кнопка играть и ещё что то если уже у игре нажать на esc но у тебя ывлезет меню где кнопкм продолжить в меню и зщанаво у тебя есть не ограниченное время главное сделай анимация кнопкам и графику с ткестурами  

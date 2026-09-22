@@ -1,0 +1,270 @@
+xpp = 0
+import pygame
+from scripts import utils
+from scripts import settings
+from scripts import anime
+from scripts import widget
+from scripts import inwentar
+from scripts import share
+import random
+pygame.init()
+select = None
+clik = False
+ВРАГ = None
+ctoit = "vыbor"
+ctoit_2_0 = "vыborь"
+run_batle = True
+
+def clik_magik():
+    global select
+    select = magik_buttun
+def clik_sword():
+    global select
+    select = sword_button
+def clik_run():
+    global select
+    select = run_buttun
+def clik_fire(): #огнем меч
+    global ctoit_2_0,ctoit
+    if ctoit == "vыbor" and PLAYR.ener >= 30:
+        PLAYR.ener -= 30
+        ctoit = "fire"
+        ctoit_2_0 = "go"
+def click_normal_sword():
+    global select,ctoit,ctoit_2_0
+    if ctoit == "vыbor" and PLAYR.ener >= 12:
+        PLAYR.ener -= 12
+        ctoit = "normal"
+        ctoit_2_0 = "go"
+def click_magik_xp():
+    if PLAYR.HP != 100:
+        if inwentar.склад.get("XP",0) > 0:
+            PLAYR.HP += 30
+            if PLAYR.HP > 100:
+                PLAYR.HP = 100
+            inwentar.rem_inwentar("XP",1)
+def click_magik_man():
+    if PLAYR.ener != 100:
+        if inwentar.склад.get("man",0) > 0:
+            PLAYR.ener += 30
+            if PLAYR.ener > 100:
+                PLAYR.ener = 100
+            inwentar.rem_inwentar("man",1)
+
+def load_fon():
+    global фон,земля,sword_button,magik_buttun,run_buttun,sword_button_sword,sword_button_fire,защита,font,efekt_fire,deadf,fire_sword,fireball_anime,click_normal_sword,sword,magink_xp,magink_man
+
+    фон = utils.load_image("graphics/font/ja7ti1z834f91.jpg",0.6)
+    земля = utils.load_image("graphics/font/i.png",4)
+    защита = utils.load_image("graphics/grass/shield (1).png",1)
+    efekt_fire = utils.load_image("graphics/grass/fire.png",2)
+    deadf = utils.load_image("graphics/grass/down.png",2)
+    fire_sword = utils.load_image("graphics/grass/Fired Sword.png",0.4)
+    fireball_anime = anime.Lazy_Anime("graphics/fireboll",1,1)
+    sword = utils.load_image("graphics/player/down_idle/idle_down.png",3)
+    font = pygame.font.Font(None,55)
+    f = 5
+    #главные кнопки
+    magik_buttun = widget.Image_button(10,settings.HEIGHT-земля.get_height()+f+земля.get_height()/3,300,земля.get_height()/3-2*f,(58,58,58),(70,70,70),"graphics/grass/3d-fire.png",f,"green")
+    magik_buttun.slot = clik_magik 
+    run_buttun = widget.Image_button(10,settings.HEIGHT-земля.get_height()+f+земля.get_height()/3*2,300,земля.get_height()/3-2*f,(58,58,58),(70,70,70),"graphics/grass/run.png",f,(255,255,255))
+    run_buttun.slot = clik_run
+    sword_button = widget.Image_button(10,settings.HEIGHT-земля.get_height()+f,300,земля.get_height()/3-2*f,(58,58,58),(70,70,70),"graphics/grass/sword.png",f,(255,140,0))
+    sword_button.slot = clik_sword
+    #не главные кнопки
+    sword_button_fire = widget.Image_button(345,660,200,земля.get_height()/3-2*f,(58,58,58),(70,70,70),"graphics/grass/sword (2).png",f,"orange")
+    sword_button_fire.slot = clik_fire
+    sword_button_sword = widget.Image_button(345,580,200,земля.get_height()/3-2*f,(58,58,58),(70,70,70),"graphics/font/slash.png",f,"orange")
+    sword_button_sword.slot = click_normal_sword
+    magink_xp = widget.Image_button(345,660,200,земля.get_height()/3-2*f,(58,58,58),(70,70,70),"graphics/font/hp.png",f,"red",image_sceil=1.6,sdvigvverx=15,tip="XP")
+    magink_xp.slot = click_magik_xp
+    magink_man = widget.Image_button(345,580,200,земля.get_height()/3-2*f,(58,58,58),(70,70,70),"map/double_jump.png",f,"blue",image_sceil=1.6,sdvigvverx=15,tip="man")
+    magink_man.slot = click_magik_man
+def render(экран,playr,враг):
+    global ctoit
+    global clik
+    global xpp
+    global x_fire
+    XM = pygame.mouse.get_pos()[0]
+    yM = pygame.mouse.get_pos()[1]
+    pygame.display.set_caption(str([XM,yM]))
+    #sword_button_sword.bbx.x = XM
+    #sword_button_sword.bbx.y = yM
+    анимация_игрок = playr.animes[pl_anime]
+    анимация_враг = враг.animes[vr_anime]
+    анимация_враг.render(экран,(0,0),925,360)
+    анимация_игрок.render(экран,(0,0),xpp,360)
+    анимация_враг.uptate()
+    экран.blit(защита,(10,70))
+    экран.blit(защита,(экран.get_width()-10-защита.get_width(),70))
+    armor1 = font.render(str(playr.armor),True,"black")
+    armor2 = font.render(str(враг.armor),True,"black")
+    sword_button.render(экран)
+    sword_button.update(clik)
+    экран.blit(armor2,(экран.get_width()-10-защита.get_width()+защита.get_width()/2-armor1.get_width()/2+1,70+защита.get_height()/2-armor1.get_height()/2+5))
+    экран.blit(armor1,(10+защита.get_width()/2-armor1.get_width()/2+1,70+защита.get_height()/2-armor1.get_height()/2+5))
+    magik_buttun.render(экран)
+    magik_buttun.update(clik)
+    run_buttun.render(экран)
+    run_buttun.update(clik)
+    if ctoit == "s_fireball":
+        fireball_anime.render(экран,(0,0),x_fire,y_fire)
+        x_fire -= 5
+        if x_fire <= 185:
+            playr.HP -= ВРАГ.dam * (1 - playr.armor/10)
+            ctoit = "vыbor"
+            playr.ener += random.randint(5,10)
+            ВРАГ.ener += random.randint(5,10)
+    #atttack_buton
+
+    if select == sword_button:
+        sword_button_sword.render(экран)
+        sword_button_sword.update(clik)
+        sword_button_fire.render(экран)
+        sword_button_fire.update(clik)
+    #xp button
+    if select == magik_buttun:
+        magink_xp.render(экран)
+        magink_xp.update(clik)
+        magink_man.render(экран)
+        magink_man.update(clik)
+    #xп
+    pygame.draw.rect(экран,(255,0,0),(10,10,300,30),border_radius=5)
+    pygame.draw.rect(экран,(0,255,0),(10,10,300*playr.HP/100,30),border_top_left_radius=5,border_bottom_left_radius=5)
+    pygame.draw.rect(экран,(255,0,0),(settings.WIDTH-310,10,300,30),border_radius=5)
+    pygame.draw.rect(экран,(0,255,0),(settings.WIDTH-10-300*враг.HP/100,10,300*враг.HP/100,30),border_top_right_radius=5,border_bottom_right_radius=5)
+    #энергия
+    pygame.draw.rect(экран,(255,0,0),(10,40,300,30),border_radius=5)
+    pygame.draw.rect(экран,(0,0,255),(10,40,300*playr.ener/100,30),border_top_left_radius=5,border_bottom_left_radius=5)
+    pygame.draw.rect(экран,(255,0,0),(settings.WIDTH-310,40,300,30),border_radius=5)
+    pygame.draw.rect(экран,(0,0,255),(settings.WIDTH-10-300*враг.ener/100,40,300*враг.ener/100,30),border_top_right_radius=5,border_bottom_right_radius=5)
+    #энергия
+def update():
+    global ctoit
+    global PLAYR
+    global xpp
+    global ВРАГ
+    if select == magik_buttun:
+        magik_buttun.aktive = True
+    if select == sword_button:
+        sword_button.aktive = True
+    if select == run_buttun:
+        run_buttun.aktive = True
+        ctoit = "vыbor"
+        PLAYR.runl = False
+        PLAYR.runu = False
+        PLAYR.rund = False
+        PLAYR.runr = False
+        xpp = 0
+        ВРАГ.ener = 100
+        ВРАГ.HP = 100
+
+
+def vrag_vibor():
+    global ctoit,taimer,vr_anime,x_fire,y_fire
+    if ВРАГ.tip == "Spirit":
+        if random.randint(1,1) == 1 and ВРАГ.ener >= 25:
+            print ("ok")
+            ctoit = "s_fireball"
+            taimer = 60
+            x_fire = 725
+            y_fire = 325
+            vr_anime = "herd_batl"
+            ВРАГ.ener -= 25
+        else:
+            ctoit = "Vыbor"
+
+def run(экран,playr,враг,):  
+        global ВРАГ,ctoit_2_0,ctoit,xpp,pl_anime,vr_anime,PLAYR,tip_cursor
+        cursor = utils.load_image('graphics/font/Image20260610104833.png',1)
+        heart_cursor = utils.load_image("graphics/font/Icon_09.png",1)
+        share.tip_cursor = 1
+        ctoit = "vыbor"
+        ctoit_2_0 = "vыborь"
+        xpp = 0
+        playr.runr = False
+        playr.runl = False
+        playr.runu = False
+        playr.rund = False
+        ВРАГ = враг
+        PLAYR = playr
+        pl_anime = "batl_anime"
+        vr_anime = "batl"
+        taimer = 240
+        podg_taimer = 500
+        clock = pygame.time.Clock()
+        vrag_hp_taimer = 0
+        while True:
+            global clik
+            global select
+            share.tip_cursor = 1
+            if playr.HP <= 0:
+               return
+            экран.fill((31,61,87))
+            экран.blit(фон,(0,0))
+            экран.blit(земля,(0,settings.HEIGHT-земля.get_height()))
+            if ВРАГ.HP <= 0:
+                return
+            if vrag_hp_taimer > 0:
+                экран.blit(efekt_fire,(950,290))
+                экран.blit(deadf,(950+efekt_fire.get_width(),290))
+                vr_anime = "herd_batl"
+                ВРАГ.HP -= 0.01
+                vrag_hp_taimer -= 1
+            if vrag_hp_taimer == 1:
+                vr_anime = "batl"
+            render(экран,playr,враг)
+            update()
+            if ctoit == "fire" or ctoit == "normal":
+                if ctoit_2_0 == "go":
+                    xpp += 5
+                    if xpp >= 680 :
+                        ctoit_2_0 = "hit"
+                        taimer = 120
+                if ctoit_2_0 == "hit":
+                    taimer -= 1
+                    if taimer <= 100:
+                        pl_anime = "batl_attak"
+                        if ctoit == "normal":
+                            экран.blit(sword,(800,500-47))
+                        if ctoit == "fire":
+                            экран.blit(fire_sword,(800,500-47))
+                    if taimer == 99:
+                        ВРАГ.HP -= playr.dam * (1 - ВРАГ.armor/10)
+                        vrag_hp_taimer = 500*2
+                    if taimer == 0:
+                       pl_anime = "batl_anime"
+                       ctoit_2_0 = "home"
+                if ctoit_2_0 == "home":
+                    xpp -= 5
+                    if xpp <= 0 :         
+                        ctoit = "podgotovka_VRAG"
+                        podg_taimer = 240
+            if ctoit == "podgotovka_VRAG" and vrag_hp_taimer == 0:
+                podg_taimer -= 1
+                vr_anime = "batl" 
+                if podg_taimer == 0:
+                    ctoit = "vыbor_VRAG"
+            if ctoit == "vыbor_VRAG" and vrag_hp_taimer == 0:
+                vrag_vibor()
+            if select == run_buttun and random.randint(1,2) == 2:
+                select = None
+                return
+                
+            clik = False
+            for ev in pygame.event.get():
+                if ev.type == pygame.MOUSEBUTTONDOWN:
+                    clik = True
+                if ev.type == pygame.KEYDOWN:
+                    if ev.key == pygame.K_k:
+                            return
+                if ev.type == pygame.QUIT:
+                    exit(0)
+            
+            XM = pygame.mouse.get_pos()[0] 
+            yM = pygame.mouse.get_pos()[1]
+            if share.tip_cursor == 1:
+                экран.blit(cursor,(XM,yM))
+            else:
+                экран.blit(heart_cursor,(XM-heart_cursor.get_width()/2,yM-heart_cursor.get_height()/2))
+            pygame.display.update()
