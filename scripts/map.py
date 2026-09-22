@@ -31,3 +31,9 @@ class КАРТА67(КАРТА):
         self.камера = [0,0]
         self.границы = utils.load_border2()
         self.vorota = utils.load_vorota()
+class КАРТАgr(КАРТА):
+    def __init__(self):
+        self.карта = utils.load_image("я карта/bobmu.png",3.9)
+        self.камера = [0,0]
+        self.границы = utils.load_border2()
+        self.vorota = utils.load_vorota()

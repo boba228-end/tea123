@@ -286,6 +286,50 @@ class Spirit(Anamy):
               self.runr = False
               self.runu = False
               self.karent_anime = "idle"
+class Bobu(Anamy):
+    def __init__(self, x, y, map):
+        self.animes = {
+        "idle":anime.Lazy_Anime("graphics/monsters/bamboo/idle",15),
+        "move":anime.Lazy_Anime("graphics/monsters/bamboo/move",15),
+        "attack":anime.Lazy_Anime("graphics/monsters/bamboo/attack",15),
+        "batl":anime.Lazy_Anime("graphics/monsters/bamboo/idle",15,3),
+        "herd_batl":anime.Lazy_Anime("graphics/monsters/bamboo/move",15,3)
+        }
+        self.karent_anime = "idle"
+        self.width = self.animes[self.karent_anime].картинки[0].get_width()
+        self.height = self.animes[self.karent_anime].картинки[0].get_height()
+        self.ai_таймер = random.randint(60*5,60*10)
+        self.направление = random.randint(1,4)
+        self.deadh_taimer = 0
+        self.tip = "bobu"
+        super().__init__(x, y, 2, self.width, self.height, map)
+    def update(self,враги):
+         super().update()  
+         self.ai_таймер -= 1
+         if self.HP <= 0:
+             self.deadh_taimer += 1
+         if self.deadh_taimer == 180:
+             inwentar.add_inwentar("трава",random.randint(2,5))
+             враги.remove(self)
+         if self.ai_таймер <= 0:
+             self.ai_таймер = random.randint(60*5,60*10)
+             if self.rund == False and self.runl == False and self.runr == False and self.runu == False:
+                self.направление = random.randint(1,4)
+                if self.направление == 1:
+                    self.rund = True
+                if self.направление == 2:
+                    self.runl = True
+                if self.направление == 3:
+                    self.runu = True
+                if self.направление == 4:
+                    self.runr = True
+                self.karent_anime = "move"
+             else:
+              self.rund = False
+              self.runl = False
+              self.runr = False
+              self.runu = False
+              self.karent_anime = "idle"
 def kreate_anmy(map):
     Anamy = []
     f = open("map/animes.csv")

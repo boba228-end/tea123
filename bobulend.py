@@ -23,15 +23,12 @@ batl.load_fon()
 glass_1 = pygame.Surface((settings.WIDTH,settings.HEIGHT),pygame.SRCALPHA)
 glass_dark = pygame.Surface((settings.WIDTH,settings.HEIGHT),pygame.SRCALPHA)
 часы = pygame.time.Clock()
-карта = map.КАРТА67()
+карта = map.КАРТАgr()
 NPCs_dio = []
+Burger_king = []
 level3 = False
 ent = antites.Entity(100,100,5,80,50,карта)
 pl = antites.Playr(31535,1460,10,карта)
-npc1 = antites.Spirit_diologNPC(31535,1460,карта,"over")
-npc2 = antites.Spirit_diologNPC(32173,1460,карта,"GG")
-NPCs_dio.append(npc1)
-NPCs_dio.append(npc2)
 #:)
 
 иветнтарь = False
@@ -69,13 +66,7 @@ def run():
      cllapst = 0
      global steat,иветнтарь
      while True:
-        
-          if npc1.HP <= 0 and npc1 in NPCs_dio:
-                         карта.vorota = []
-                         NPCs_dio.remove(npc1)     
-          if npc2.HP <= 0 and npc2 in NPCs_dio:
-                                   карта.vorota = []
-                                   NPCs_dio.remove(npc2)     
+         
           if steat == "game":
                pl.ener += 0.002
                #print(pl.exp)
@@ -136,7 +127,7 @@ def run():
                               exit(0)
                          if ev.type == pygame.KEYDOWN:
                               if ev.key == pygame.K_SPACE:
-                                   pl.attak([],partikals,враги,экран)
+                                  pl.attak([],partikals,враги,экран) 
                               if ev.key == pygame.K_a and dialog.in_dialog == False:
                                    pl.runl = True
                               if ev.key == pygame.K_k:
@@ -172,7 +163,6 @@ def run():
                for i in bombutp: 
                     if pl.get_bx().colliderect(i):
                          pygame.draw.rect(экран,(255,0,0),(100,100,1000,1000))
-
                if share.level3 == True and cllapst == 0:
                      cllapst = 120
 
