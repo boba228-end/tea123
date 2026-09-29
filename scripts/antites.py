@@ -7,6 +7,7 @@ from scripts import batl
 from scripts import inwentar
 from scripts import share
 from scripts import map
+import pytmx
 import csv
 import os
 import json
@@ -332,15 +333,10 @@ class Bobu(Anamy):
               self.karent_anime = "idle"
 def kreate_anmy(map):
     Anamy = []
-    f = open("map/animes.csv")
-    riter = csv.reader(f)
-    for cтрока,x in enumerate(riter):
-           for столбец,y in enumerate(x):
-               if y == "390":
-                   враг = Spirit(32*столбец,32*cтрока,map)
-                   Anamy.append(враг)
-
-    f.close()
+    world = pytmx.load_pygame("я карта/spiritland.tmx")
+    for x,y,gid in world.get_layer_by_name("spirits"):
+        if gid != 0:
+            Anamy.append(Spirit(x*16*3.9,y*16*3.9,map))
     return(Anamy)
 class Spirit_diologNPC(Spirit):
     def __init__(self, x, y, map,name):
